@@ -1,7 +1,5 @@
 'use client';
-
-
-import Form from "./components/form";
+import Form from "./components/Form";
 // import type { FormProps } from 'antd';
 import styles from "./page.module.css";
 
