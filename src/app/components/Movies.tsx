@@ -3,12 +3,18 @@
 import Image from "next/image";
 import styles from "@/app/page.module.css";
 import type { FormProps } from 'antd';
-import { Button, Checkbox, Form as AntdForm, Input } from 'antd';
+import { Button, Checkbox, Form as AntdForm,  } from 'antd';
 import React ,{useEffect} from "react";
-import Search from "antd/es/transfer/search";
 import { Card } from 'antd';
-import { Carousel } from 'antd';
-import { title } from "process";
+import  { useState } from 'react';
+import { SearchOutlined } from '@ant-design/icons';
+import { AudioOutlined } from '@ant-design/icons';
+import { Input, Space } from 'antd';
+import type { GetProps } from 'antd';
+import {  Result } from 'antd';
+import { Spin } from 'antd';
+
+const { Search } = Input;
 
 
 const contentStyle: React.CSSProperties = {
@@ -33,55 +39,58 @@ type Movie  = {
 type Search ={
   Search : Movie [];
   totalResults: number
-  response : boolean
+  Response : string
 }
 export default function Movies() {
-  const [data, setData]: [Search,any]= React.useState({Search:[],totalResults: 0,response : false  } );
+  const [data, setData]: [Search,any]= React.useState({Search:[],totalResults: 0,Response : "False"  } );
   const [loading , setLoading]  = React.useState(false);
 
-  
-  useEffect(() => {
-    fetchData();
-  }, []);
 
-
-  const fetchData = async () => {
+  const fetchData = async (movieName:string) => {
+    console.log({movieName})
     setLoading(true);
-    const response = await fetch("https://www.omdbapi.com/?apikey=8bdf708a&s=hangover");
-    setData(await response.json());
+    const response = await fetch(`https://www.omdbapi.com/?apikey=8bdf708a&s=${movieName}`);
+    const data1 = await response.json()
+    setData(data1);
     setLoading(false);
   };
   
 
-function renderPosts() {
-  return data.Search.map((post : Movie, index: number ) => {
+  function renderPosts() {
     return (
-      
-        <Card
-        key={index}
-    hoverable
-    style={{ width: 240 }}
-    cover={<img alt="example" src={post.Poster} />}
-  >
-    <Meta title={post.Title} description={post.Year}  />
-  </Card>
-    
+      <div>
+    {
+      data.Search?.map((post: Movie, index: number) => (
+          <div key={index}>
+            <Card
+              hoverable
+              style={{ width: 240 }}
+              cover={<img alt="example" src={post.Poster} />}
+            >
+              <Meta title={post.Title} description={post.Year} />
+            </Card>
+          </div>
+        ))
+      }
+      </div>
     );
-  });
-}
-
+  }  
 
 return (
   <main className={styles.main}>
+         <Search
+      placeholder="input search text"
+      allowClear
+      enterButton="Search"
+      size="large"
+      onSearch={fetchData}
+    />
+  {loading ?  <Spin /> : data?.Response !== 'False' ?  renderPosts() : <h1> <Result
+    status="500"
+    title=" No Data"
   
    
- 
-  {/* <Carousel arrows infinite={false}> */}
-  { renderPosts()}
-      {/* </Carousel> */}
-   
-    
-  
+  /></h1>}
   </main>
   );
 }
