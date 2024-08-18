@@ -54,10 +54,11 @@ export default function Movies() {
   
 
 function renderPosts() {
-  return data.Search.map((post : Movie ) => {
+  return data.Search.map((post : Movie, index: number ) => {
     return (
       
         <Card
+        key={index}
     hoverable
     style={{ width: 240 }}
     cover={<img alt="example" src={post.Poster} />}
